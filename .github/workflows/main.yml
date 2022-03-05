@@ -15,6 +15,7 @@ on:
   
   
 jobs: 
+  
   cypress-run:
     runs-on: ubuntu-latest
     steps:
@@ -32,6 +33,9 @@ jobs:
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
             ${{ runner.os }}-
+        
+      - name: Install dependencies
+        run: npm install
         
       - name: Prisma init
         run: npm run prisma:init
