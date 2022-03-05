@@ -22,7 +22,7 @@ jobs:
         uses: actions/checkout@v1
         
       - name: Cache
-        uses: action/cache@v2
+        uses: actions/cache@v2
         env: 
           cache-name: cache-node-modules
         with:
@@ -48,10 +48,10 @@ jobs:
     runs-on: ubuntu-lates
     steps: 
       - name: Checkout
-        uses: action/checkout@v2
+        uses: actions/checkout@v2
         
       - name: Cache
-        uses: action/cache@v2
+        uses: actions/cache@v2
         env: 
           cache-name: cache-node-modules
         with:
