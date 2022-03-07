@@ -44,6 +44,9 @@ jobs:
                   build: npm run build
                   start: npm start
 
+            - name: Prisma reset
+              run: npm run prisma:reset
+
     jest:
         runs-on: ubuntu-latest
         steps:
