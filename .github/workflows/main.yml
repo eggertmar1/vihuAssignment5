@@ -107,13 +107,13 @@ jobs:
                   labels: ${{ steps.meta.outputs.labels }}
 
             - name: Update deployment file
-              run: TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|hub.docker.com/eggerte19/assignment-5-e2e:'${TAG}'|' $GITHUB_WORKSPACE/templates/deployment.yml
+              run: TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|hub.docker.com/eggerte19/assignment-5-e2e:'${TAG}'|' $GITHUB_WORKSPACE/templates/deployment.yaml
 
             - name: Save DigitalOcean kubeconfig with short-lived credentials
               run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 todo-production
 
             - name: Deploy to DigitalOcean Kubernetes
-              run: kubectl apply -f $GITHUB_WORKSPACE/templates/deployment.yml
+              run: kubectl apply -f $GITHUB_WORKSPACE/templates/deployment.yaml
 
             - name: Verify deployment
               run: kubectl rollout status deployment/todo-app
