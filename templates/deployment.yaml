@@ -15,7 +15,7 @@ spec:
                 version: v1
         spec:
             containers:
-                - image: <IMAGE> # TODO: Fix so github actions can pull the image from the repo
+                - image: eggerte19/assignment-5-e2e:latest
                   imagePullPolicy: Always
                   name: todo-app
                   ports:
