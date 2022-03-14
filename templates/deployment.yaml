@@ -15,7 +15,7 @@ spec:
                 version: v1
         spec:
             containers:
-                - image: eggerte19/assignment-5-e2e:latest
+                - image: <IMAGE>
                   imagePullPolicy: Always
                   name: todo-app
                   ports:
