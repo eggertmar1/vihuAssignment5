@@ -105,7 +105,7 @@ jobs:
                   context: .
                   push: true
                   # tags: ${{ steps.meta.outputs.tags }}
-                  tags: ${{ $GITHUB_SHA }}
+                  tags: $GITHUB_SHA
                   labels: ${{ steps.meta.outputs.labels }}
 
             - name: Update deployment file
