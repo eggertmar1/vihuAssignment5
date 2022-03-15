@@ -108,7 +108,7 @@ jobs:
                   labels: ${{ steps.meta.outputs.labels }}
 
             - name: Update deployment file
-              run: TAG=$(GITHUB_SHA) && sed -i 's|<IMAGE>|eggerte19/assignment-5-e2e:'${TAG}'|' $GITHUB_WORKSPACE/templates/deployment.yaml
+              run: TAG=$($GITHUB_SHA) && sed -i 's|<IMAGE>|eggerte19/assignment-5-e2e:'${TAG}'|' $GITHUB_WORKSPACE/templates/deployment.yaml
             # run: TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|hub.docker.com/repository/docker/eggerte19/assignment-5-e2e:latest|' $GITHUB_WORKSPACE/templates/deployment.yaml
             - name: Save DigitalOcean kubeconfig with short-lived credentials
               run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 todo-production
