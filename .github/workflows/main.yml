@@ -107,7 +107,7 @@ jobs:
                   context: .
                   push: true
                   # tags: ${{ steps.meta.outputs.tags }}
-                  tags: eggerte19/assignment-5-e2e:TAG
+                  tags: $TAG
                   labels: ${{ steps.meta.outputs.labels }}
 
             - name: Update deployment file
