@@ -14,69 +14,67 @@ on:
     workflow_dispatch:
 
 jobs:
-    # cypress-run:
-    #     runs-on: ubuntu-latest
-    #     steps:
-    #         - name: Checkout
-    #           uses: actions/checkout@v1
+    cypress-run:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v1
 
-    #         - name: Cache
-    #           uses: actions/cache@v2
-    #           env:
-    #               cache-name: cache-node-modules
-    #           with:
-    #               path: ~/.npm
-    #               key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-    #               restore-keys: |
-    #                   ${{ runner.os }}-build-${{ env.cache-name }}-
-    #                   ${{ runner.os }}-build-
-    #                   ${{ runner.os }}-
+            - name: Cache
+              uses: actions/cache@v2
+              env:
+                  cache-name: cache-node-modules
+              with:
+                  path: ~/.npm
+                  key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+                  restore-keys: |
+                      ${{ runner.os }}-build-${{ env.cache-name }}-
+                      ${{ runner.os }}-build-
+                      ${{ runner.os }}-
 
-    #         - name: Install dependencies
-    #           run: npm install
+            - name: Install dependencies
+              run: npm install
 
-    #         - name: Prisma init
-    #           run: npm run prisma:init
+            - name: Prisma init
+              run: npm run prisma:init
 
-    #         - name: Cypress run
-    #           uses: cypress-io/github-action@v2.9.7
-    #           with:
-    #               build: npm run build
-    #               start: npm start
+            - name: Cypress run
+              uses: cypress-io/github-action@v2.9.7
+              with:
+                  build: npm run build
+                  start: npm start
 
-    #         - name: Prisma reset
-    #           run: npm run prisma:reset
+            - name: Prisma reset
+              run: npm run prisma:reset
 
-    # jest:
-    #     runs-on: ubuntu-latest
-    #     steps:
-    #         - name: Checkout
-    #           uses: actions/checkout@v2
+    jest:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
 
-    #         - name: Cache
-    #           uses: actions/cache@v2
-    #           env:
-    #               cache-name: cache-node-modules
-    #           with:
-    #               path: ~/.npm
-    #               key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-    #               restore-keys: |
-    #                   ${{ runner.os }}-build-${{ env.cache-name }}-
-    #                   ${{ runner.os }}-build-
-    #                   ${{ runner.os }}-
+            - name: Cache
+              uses: actions/cache@v2
+              env:
+                  cache-name: cache-node-modules
+              with:
+                  path: ~/.npm
+                  key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+                  restore-keys: |
+                      ${{ runner.os }}-build-${{ env.cache-name }}-
+                      ${{ runner.os }}-build-
+                      ${{ runner.os }}-
 
-    #         - name: Install dependencies
-    #           run: npm install
+            - name: Install dependencies
+              run: npm install
 
-    #         - name: Component tests
-    #           run: npm run test
+            - name: Component tests
+              run: npm run test
 
     deploy:
-        # needs: [cypress-run, jest]
+        needs: [cypress-run, jest]
         name: Deploy
         runs-on: ubuntu-latest
-        # env:
-        #     TAG: ${{ github.sha }}
         steps:
             - name: Checkout master
               uses: actions/checkout@main
@@ -87,30 +85,7 @@ jobs:
 
             - name: Check out the repo
               uses: actions/checkout@v2
-            # hello
-            # ----------------------------------------------------------FOR DOCKERHUB
-            # - name: Log in to Docker Hub
-            #   uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
-            #   with:
-            #       username: ${{ secrets.DOCKERHUB_USERNAME }}
-            #       password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-            # - name: Extract metadata (tags, labels) for Docker
-            #   id: meta
-            #   uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
-            #   with:
-            #       images: eggerte19/assignment-5-e2e
-
-            # - name: Build and push Docker image
-            #   # uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
-            #   uses: docker/build-push-action@v2
-            #   with:
-            #       context: .
-            #       push: true
-            #       # tags: ${{ steps.meta.outputs.tags }}
-            #       tags: $TAG
-            #       labels: ${{ steps.meta.outputs.labels }}
-            # # --------------------------------------------------------- FOR DOCKERHUB
             - name: Build container image
               run: docker build -t registry.digitalocean.com/todo-app312/assignment-5-e2e:$(echo $GITHUB_SHA | head -c7) .
 
@@ -122,8 +97,7 @@ jobs:
             # --------------------
             - name: Update deployment file
               run: TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|registry.digitalocean.com/todo-app312/assignment-5-e2e:'${TAG}'|' $GITHUB_WORKSPACE/templates/deployment.yaml
-              # run: TAG=($GITHUB_SHA) && sed -i 's|<IMAGE>|eggerte19/assignment-5-e2e:TAG|' $GITHUB_WORKSPACE/templates/deployment.yaml
-              # run: sed -i 's|<IMAGE>|hub.docker.com/repository/docker/eggerte19/assignment-5-e2e:'${TAG}'|' $GITHUB_WORKSPACE/templates/deployment.yaml
+
             - name: Save DigitalOcean kubeconfig with short-lived credentials
               run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 todo-production
 
