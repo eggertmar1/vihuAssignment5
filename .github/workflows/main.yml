@@ -113,20 +113,25 @@ jobs:
             # # --------------------------------------------------------- FOR DOCKERHUB
             - name: Build container image
               run: docker build -t registry.digitalocean.com/todo-app312/assignment-5-e2e:$(echo $GITHUB_SHA | head -c7) .
+
             - name: Log in to DigitalOcean Container Registry with short-lived credentials
               run: doctl registry login --expiry-seconds 1200
+
             - name: Push image to DigitalOcean Container Registry
               run: docker push registry.digitalocean.com/todo-app312/assignment-5-e2e:$(echo $GITHUB_SHA | head -c7)
             # --------------------
             - name: Update deployment file
+              run: TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|registry.digitalocean.com/todo-app312/assignment-5-e2e:'${TAG}'|' $GITHUB_WORKSPACE/templates/deployment.yaml
               # run: TAG=($GITHUB_SHA) && sed -i 's|<IMAGE>|eggerte19/assignment-5-e2e:TAG|' $GITHUB_WORKSPACE/templates/deployment.yaml
-              run: TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|hub.docker.com/repository/docker/eggerte19/assignment-5-e2e:'${TAG}'|' $GITHUB_WORKSPACE/templates/deployment.yaml
               # run: sed -i 's|<IMAGE>|hub.docker.com/repository/docker/eggerte19/assignment-5-e2e:'${TAG}'|' $GITHUB_WORKSPACE/templates/deployment.yaml
             - name: Save DigitalOcean kubeconfig with short-lived credentials
               run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 todo-production
 
             - name: Deploy to DigitalOcean Kubernetes
               run: kubectl apply -f $GITHUB_WORKSPACE/templates/deployment.yaml
+
+            - name: Set up load balancer
+              run: kubectl apply -f $GITHUB_WORKSPACE/templates/service.yaml
 
             - name: Verify deployment
               run: kubectl rollout status deployment/todo-app
